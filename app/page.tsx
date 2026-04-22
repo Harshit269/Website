@@ -93,7 +93,7 @@ export default function HomePage() {
               <Link
                 href="/login"
                 className="px-6 py-3 text-sm font-semibold border-2 btn-press"
-                style={{ borderColor: 'var(--ink)' }}
+                style={{ borderColor: 'var(--ink)', color: 'var(--ink)' }}
               >
                 Sign in
               </Link>
