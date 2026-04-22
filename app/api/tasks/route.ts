@@ -4,7 +4,7 @@ import type { CreateTaskInput } from '@/lib/types'
 
 // GET /api/tasks - fetch all tasks for the logged-in user
 export async function GET() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
@@ -26,7 +26,7 @@ export async function GET() {
 
 // POST /api/tasks - create a new task
 export async function POST(request: Request) {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {

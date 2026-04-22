@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 
 // GET /api/user - get current user profile
 export async function GET() {
-  const supabase = createClient()
+  const supabase = await createClient()
 
   const { data: { user }, error } = await supabase.auth.getUser()
   if (error || !user) {

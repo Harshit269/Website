@@ -5,9 +5,10 @@ import type { UpdateTaskInput } from '@/lib/types'
 // PATCH /api/tasks/[id] - update a task
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createClient()
+  const { id } = await params
+  const supabase = await createClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
@@ -22,7 +23,7 @@ export async function PATCH(
       ...body,
       updated_at: new Date().toISOString(),
     })
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id) // Ensure user owns the task
     .select()
     .single()
@@ -41,9 +42,10 @@ export async function PATCH(
 // DELETE /api/tasks/[id] - delete a task
 export async function DELETE(
   _request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createClient()
+  const { id } = await params
+  const supabase = await createClient()
 
   const { data: { user }, error: authError } = await supabase.auth.getUser()
   if (authError || !user) {
@@ -53,7 +55,7 @@ export async function DELETE(
   const { error } = await supabase
     .from('tasks')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id) // Ensure user owns the task
 
   if (error) {
