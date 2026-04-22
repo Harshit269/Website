@@ -9,10 +9,12 @@ interface CookieOption {
 
 export async function createClient() {
   const cookieStore = await cookies()
+  const url = (process.env.NEXT_PUBLIC_SUPABASE_URL || '').trim().replace(/^"|"$/g, '')
+  const key = (process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '').trim().replace(/^"|"$/g, '')
 
   return createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    url,
+    key,
     {
       cookies: {
         getAll() {
