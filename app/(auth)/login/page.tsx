@@ -13,10 +13,22 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  
+  // Safe client initialization that won't crash the page if vars are missing
+  let supabase: any = null;
+  let envError = null;
+  try {
+    supabase = createClient()
+  } catch (err: any) {
+    envError = err.message;
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!supabase) {
+      setError("Cannot log in: Environment variables are missing.")
+      return;
+    }
     setLoading(true)
     setError(null)
 
@@ -81,6 +93,14 @@ export default function LoginPage() {
           >
             Sign in
           </h1>
+
+          {envError && (
+            <div className="mb-6 p-4 border-2 border-red-500 bg-red-50 text-red-700 text-sm font-mono break-all">
+              <strong>SYSTEM ERROR:</strong><br />
+              {envError}<br /><br />
+              Vercel URL variables: <code>{process.env.NEXT_PUBLIC_SUPABASE_URL || 'UNDEFINED'}</code>
+            </div>
+          )}
 
           <form onSubmit={handleLogin} className="space-y-4">
             <div>

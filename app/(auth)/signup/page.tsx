@@ -15,10 +15,22 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
+  
+  // Safe client initialization that won't crash the page if vars are missing
+  let supabase: any = null;
+  let envError = null;
+  try {
+    supabase = createClient()
+  } catch (err: any) {
+    envError = err.message;
+  }
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!supabase) {
+      setError("Cannot sign up: Environment variables are missing.")
+      return;
+    }
     setLoading(true)
     setError(null)
 
@@ -128,6 +140,14 @@ export default function SignupPage() {
           >
             New account
           </div>
+
+          {envError && (
+            <div className="mb-6 p-4 border-2 border-red-500 bg-red-50 text-red-700 text-sm font-mono break-all">
+              <strong>SYSTEM ERROR:</strong><br />
+              {envError}<br /><br />
+              Vercel URL variables: <code>{process.env.NEXT_PUBLIC_SUPABASE_URL || 'UNDEFINED'}</code>
+            </div>
+          )}
 
           <h1
             className="text-3xl mb-6"
